@@ -149,10 +149,10 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
     main.newGame(2);
     
     // add images to the grid
-    main.insertImage("img/Pineapple-Upside-down-cake_1_1.jpg", 1, 1);
-    main.insertImage("img/Pineapple-Upside-down-cake_0_0.jpg", 0, 0);
-    main.insertImage("img/Pineapple-Upside-down-cake_1_0.jpg", 1, 0);
-    main.insertImage("img/Pineapple-Upside-down-cake_0_1.jpg", 0, 1);
+    main.insertImage("img/row-2-col-2.jpg", 1, 1);
+    main.insertImage("img/row-1-col-1.jpg", 0, 0);
+    main.insertImage("img/row-2-col-1.jpg", 1, 0);
+    main.insertImage("img/row-1-col-2.jpg", 0, 1);
     
     // show an error for a missing image file
     main.insertImage("does not exist.jpg", 0, 0);
