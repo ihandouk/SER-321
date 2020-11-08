@@ -3,10 +3,7 @@ package Assignment3Starter;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -51,23 +48,15 @@ public class PicturePanel extends JPanel {
     }
   }
 
-  // States that the widget can be in
   private enum States {
-    // no game started
     NotStarted, 
-    // game started, but has no image and therefore doesn't know size
     InGameNoImage, 
-    // game fully initialized
     InGameWithImage
   }
 
-  // picture grid state
   private JLabel[][] labels;
   private States state;
 
-  /**
-   * Constructor
-   */
   public PicturePanel() {
     setLayout(new FlowLayout());
     setSize(500, 500);
@@ -84,14 +73,11 @@ public class PicturePanel extends JPanel {
   public void newGame(int dimension) {
     // clear board
     this.removeAll();
-    // set size of grid
     setLayout(new GridLayout(dimension, dimension));
-    // initialize labels
     labels = new JLabel[dimension][dimension];
     for (int row = 0; row < dimension; ++row) {
       for (int col = 0; col < dimension; ++col) {
         labels[row][col] = new JLabel();
-        // add to grid
         add(labels[row][col]);
       }
     }
@@ -129,27 +115,18 @@ public class PicturePanel extends JPanel {
    * @throws IOException - File error
    * @throws InvalidCoordinateException - Invalid coordinate attempted
    */
-  public boolean insertImage(String fname, int row, int col) throws IOException, InvalidCoordinateException {
+  public boolean insertImage(BufferedImage img, int row, int col) throws IOException, InvalidCoordinateException {
     // Check or invalid coordinates
     if (row < 0 || col < 0 || 
         row >= 0 && labels.length <= row || 
         labels[row].length <= col) {
       throw new InvalidCoordinateException(labels.length, labels.length, row, col);
     }
-    
-    // create file reference
-    File file = new File(fname);
-    if (file.exists()) {
-      // import image
-      BufferedImage img = ImageIO.read(file);
-      // create icon to display
       ImageIcon icon = new ImageIcon(img); 
       // do we need to setup the dimensions of all the containers?
       handleFirstImage(icon.getIconWidth(), icon.getIconHeight());
       // insert image
       labels[row][col].setIcon(icon);
       return true;
-    }
-    return false;
   }
 }

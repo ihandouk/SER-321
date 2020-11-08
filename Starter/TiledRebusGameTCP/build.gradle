@@ -4,7 +4,16 @@ apply plugin: 'application'
 //define main class
 mainClassName = 'Concentration'
 
-task Gui(type: JavaExec) {
+repositories {
+  mavenCentral()
+}
+
+dependencies{
+  compile 'org.json:json:20171018'
+  compile 'com.google.code.gson:gson:2.8.6'
+}
+
+task runClient(type: JavaExec) {
   group 'gui'
   description 'Displays a GUI for a game of concentration'
 
@@ -25,21 +34,8 @@ task Maker(type: JavaExec) {
 }
 description = "TCP Client Server Example"
 
-task runClient(type: JavaExec) {
-  classpath = sourceSets.main.runtimeClasspath
-  description = "Run Client"
-  main = 'TCPClient'
-  // default args
-  args 'localhost' // host
-  args '9099' // port
-  args 'This is line one.\nThis is line two' // data
-}
-
 task runServer(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
   description = "Run Server"
-  main = 'TCPServer'
-  // default args
-  args '9099' // port
-  args '9' // delay
+  main = 'Assignment3Starter.TCPServer'
 }

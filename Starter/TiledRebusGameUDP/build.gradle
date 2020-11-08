@@ -4,7 +4,16 @@ apply plugin: 'application'
 //define main class
 mainClassName = 'Concentration'
 
-task Gui(type: JavaExec) {
+repositories {
+  mavenCentral()
+}
+
+dependencies{
+  compile 'org.json:json:20171018'
+  compile 'com.google.code.gson:gson:2.8.6'
+}
+
+task runClient(type: JavaExec) {
   group 'gui'
   description 'Displays a GUI for a game of concentration'
 
@@ -22,4 +31,11 @@ task Maker(type: JavaExec) {
 
   main = 'Assignment3Starter.GridMaker'
   standardInput = System.in
+}
+description = "TCP Client Server Example"
+
+task runServer(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  description = "Run Server"
+  main = 'Assignment3Starter.UDPServer'
 }

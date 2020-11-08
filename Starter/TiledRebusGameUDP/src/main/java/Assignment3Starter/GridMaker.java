@@ -9,7 +9,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 /**
- * Creates the square image grid used in Assignment 3
+ * Creates the square image grid
  * 
  * Usage: gradle Maker --args="<image to slice> <size>"
  */
@@ -26,7 +26,7 @@ public class GridMaker {
    * 
    * https://javapointers.com/java/java-core/crop-image-java/
    */
-  public static BufferedImage cropImage(BufferedImage bufferedImage, int x, int y, int width, int height) {
+  public BufferedImage cropImage(BufferedImage bufferedImage, int x, int y, int width, int height) {
     BufferedImage croppedImage = bufferedImage.getSubimage(x, y, width, height);
     return croppedImage;
   }
@@ -38,10 +38,10 @@ public class GridMaker {
    * @param height of result image
    * @return resized image
    */
-  public static BufferedImage resize(BufferedImage image, int width, int height) {
+  public BufferedImage resize(BufferedImage image, int width, int height) {
     if (width < 1 || height < 1)
       return null;
-    // create output buffer
+      // create output buffer
     BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     Graphics2D g = resizedImage.createGraphics();
     // draw at new size
@@ -49,8 +49,21 @@ public class GridMaker {
     g.dispose();
     return resizedImage;
   }
-  
-  public static void main(String[] args) throws IOException {
+  public void creatNewImagePath(FancyPath path) {
+    String bin = path.getDirectory() + "../splitimg";
+    try {
+      File file = new File(bin);
+      if (file.exists()) {
+        String[] entries = file.list();
+        for (String s: entries){
+            File currentFile = new File(file.getPath(), s);
+            currentFile.delete();
+        }
+      }
+      boolean bfile = file.mkdir();
+    } catch (Exception e) {}
+  }
+  public BufferedImage[] run (String[] args) throws IOException {
     if (args.length == 0) {
       System.out.println("Maker <image to slice> <size>");
       System.exit(0);
@@ -77,32 +90,40 @@ public class GridMaker {
     int cellWidth = divisibleWidth / dimension;
     
     String oldFilename = path.getFilename();
+    creatNewImagePath(path);
     // for each crop section
+    BufferedImage[] imgs = new BufferedImage[dimension * dimension];
+    int i = 0;
     for(int r = 0; r < dimension; ++r) {
       for (int c = 0; c < dimension; ++c) {
         // crop and output
         BufferedImage output = cropImage(img, c*cellWidth, r*cellHeight, cellWidth, cellHeight);
-        path.setFilename(oldFilename + "_" + r + "_" + c);
+        path.setFilename("../splitimg/" + oldFilename + "_" + r + "_" + c);
         path.setExtension("jpg");
         File pathFile = new File(path.toString());
+        imgs[i] = output;
+        i++;
         ImageIO.write(output,"jpg", pathFile);
       }
     } 
-    // finish with useful info
     System.out.println("Output image dimension: " + new Dimension(img.getWidth(), img.getHeight()));
     System.out.println("Cell output dimension: " +  new Dimension(cellWidth, cellHeight));
+    return imgs;
+  }
+  public static void main(String[] args) throws IOException {
+    new GridMaker().run(args);
   }
   
   /**
    * Tokenizes and analyzes a file path to allow for manipulation
    */
-  public static class FancyPath {
+  public class FancyPath {
     // determine *nix vs Windows
     private String delimiter;
     // whole original path
     private String absolutePath;
     // path up to file
-    private String folderPath;
+    private String directoryPath;
     // specific file name
     private String filename;
     // specific file extension
@@ -112,9 +133,7 @@ public class GridMaker {
       absolutePath = file.getAbsolutePath();
       // *nix or windows?
       delimiter = absolutePath.startsWith("/") ? "/" : "\\";
-      
-      folderPath = absolutePath.substring(0, absolutePath.lastIndexOf(delimiter) + 1);
-      
+      directoryPath = absolutePath.substring(0, absolutePath.lastIndexOf(delimiter) + 1);
       String filenameWithExt = absolutePath.substring(absolutePath.lastIndexOf(delimiter) + 1);
       
       int lastPeriod = filenameWithExt.lastIndexOf('.');
@@ -128,7 +147,6 @@ public class GridMaker {
         extension = "";
       }
     }
-    
     /**
      * Gets filename
      * @return filename
@@ -136,7 +154,15 @@ public class GridMaker {
     public String getFilename() {
       return filename;
     }
-    
+
+    /**
+     * Sets directory
+     * @param directoryPath to save in the correct path
+     */
+    public String getDirectory() {
+      return directoryPath;
+    }
+
     /**
      * Sets filename
      * @param newFilename to set to filename
@@ -144,7 +170,7 @@ public class GridMaker {
     public void setFilename(String newFilename) {
       filename = newFilename;
     }
-    
+
     /**
      * Gets file extension
      * @return file extension
@@ -166,7 +192,7 @@ public class GridMaker {
      */
     @Override
     public String toString() {
-      return folderPath + filename + "." + extension;
+      return directoryPath + filename + "." + extension;
     }
   }
 }

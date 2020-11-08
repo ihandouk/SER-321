@@ -3,10 +3,14 @@ package Assignment3Starter;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.io.IOException;
-
+import java.io.*;
+import javax.swing.JOptionPane;
 import javax.swing.JDialog;
 import javax.swing.WindowConstants;
+import org.json.*;
+import java.util.Base64;
+import javax.imageio.*;
+import java.awt.image.BufferedImage;
 
 /**
  * The ClientGui class is a GUI frontend that displays an image grid, an input text box,
@@ -25,19 +29,65 @@ import javax.swing.WindowConstants;
  * 
  * Notes
  * -----------
- * > Does not show when created. show() must be called to show he GUI.
+ * > Does not show when created. show() must be called to show the GUI.
  * 
  */
 public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
   JDialog frame;
   PicturePanel picturePanel;
   OutputPanel outputPanel;
+  UDPClient udpCl;
+  JSONObject question;
 
-  /**
-   * Construct dialog
-   */
-  public ClientGui() {
-    frame = new JDialog();
+  public ClientGui(String[] args) throws Exception {
+    udpCl = new UDPClient(args, this);
+    runGUI();
+  }
+
+  private void errorMessageException(Exception e) {
+    e.printStackTrace();
+    JOptionPane.showMessageDialog(frame, "Invalid Argument");
+  }
+
+  public void runGUI() {
+    String value = JOptionPane.showInputDialog("Select number of puzzle boards between 2 - 3"); 
+    if(value == null || (value != null && ("".equals(value)))) {
+      udpCl.end();
+      System.exit(0);
+    }
+    try {
+      int count = Integer.parseInt(value);
+      if (count > 3 || count < 2) {
+        throw new IllegalArgumentException();
+      }
+      udpCl.createGame(count);
+      clientGui();
+      newGame(count);
+    } catch (NumberFormatException nfe) {
+      JOptionPane.showMessageDialog(frame, "Invalid input");
+      runGUI();
+    } catch (ServerIsFullException e) {
+      JOptionPane.showMessageDialog(frame, "Server is busy, try again later");
+      runGUI();
+    } catch (IllegalArgumentException e) {
+      JOptionPane.showMessageDialog(frame, "Invalid Entry, please try again!");
+      runGUI();
+    } catch (Exception e) {
+      errorMessageException(e);
+      runGUI();
+    } 
+  }
+  public void mathQuestion() throws Exception {
+    question = udpCl.getQuestion();
+    Integer quest1 = question.getInt("quest1");
+    Integer quest2 = question.getInt("quest2");
+    Integer quest3 = question.getInt("quest3");
+    Integer quest4 = question.getInt("quest4");
+    outputPanel.appendOutput("what is " + quest1 + " + " + quest2 +"*"+ quest3 + " + " + quest4 + "?");
+  }
+
+  public void clientGui() {
+    frame = new JDialog(); 
     frame.setLayout(new GridBagLayout());
     frame.setMinimumSize(new Dimension(500, 500));
     frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -61,7 +111,6 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
     outputPanel.addEventHandlers(this);
     frame.add(outputPanel, c);
   }
-
   /**
    * Shows the current state in the GUI
    * @param makeModal - true to make a modal window, false disables modal behavior
@@ -77,10 +126,16 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
    * @param dimension - the size of the grid will be dimension x dimension
    */
   public void newGame(int dimension) {
-    picturePanel.newGame(dimension);
-    outputPanel.appendOutput("Started new game with a " + dimension + "x" + dimension + " board.");
+    try {
+      picturePanel.newGame(dimension);
+      outputPanel.appendOutput("Started new game with a " + dimension + "x" + dimension + " board.");
+      mathQuestion();
+      
+    } catch (Exception e) {
+      errorMessageException(e);
+    }
   }
-
+  
   /**
    * Insert an image into the grid at position (col, row)
    * 
@@ -90,16 +145,15 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
    * @return true if successful, false if an invalid coordinate was provided
    * @throws IOException An error occured with your image file
    */
-  public boolean insertImage(String filename, int row, int col) throws IOException {
+  public boolean insertImage(BufferedImage img, int row, int col) throws IOException {
     String error = "";
     try {
       // insert the image
-      if (picturePanel.insertImage(filename, row, col)) {
-      // put status in output
-        outputPanel.appendOutput("Inserting " + filename + " in position (" + row + ", " + col + ")");
+      if (picturePanel.insertImage(img, row, col)) {
+        // put status in output
+        outputPanel.appendOutput("Inserting an image (" + row + ", " + col + ")");
         return true;
       }
-      error = "File(\"" + filename + "\") not found.";
     } catch(PicturePanel.InvalidCoordinateException e) {
       // put error in output
       error = e.toString();
@@ -121,11 +175,42 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
     if (input.length() > 0) {
       // append input to the output panel
       outputPanel.appendOutput(input);
+      try {
+        JSONObject head = udpCl.CheckAnswer(input);
+        Boolean corVal = head.getBoolean("corVal");
+        if (!corVal) {
+          outputPanel.appendOutput("Incorrect, try again");
+        } else {
+          String imageB64 = head.getString("image");
+          byte[] imageBytes = Base64.getDecoder().decode(imageB64);
+          BufferedImage img = ImageIO.read(new ByteArrayInputStream(imageBytes));
+          int row = head.getInt("row");
+          int col = head.getInt("col");
+          insertImage( img, row, col);
+          outputPanel.appendOutput("Correct!");
+          Boolean win = head.getBoolean("win");
+          if (win) {
+            Object[] options = {"OK"};
+            int onj = JOptionPane.showOptionDialog(null, "Congratulations!\nYou have equal amount of wins as:\nNew York Giant and Jets combined!", "Win!", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+            if(onj == JOptionPane.OK_OPTION) {
+              System.exit(0);
+            }
+          }
+          mathQuestion();
+        }
+      } catch (LoseGameException e) {
+        Object[] options = {"OK"};
+        int onj = JOptionPane.showOptionDialog(null, "You lose!\nYou need more math in your life", "Lose!", JOptionPane.PLAIN_MESSAGE, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+        if(onj == JOptionPane.OK_OPTION) {
+          System.exit(0);
+        }
+      } catch (Exception e) {
+        errorMessageException(e);
+      }
       // clear input text box
       outputPanel.setInputText("");
     }
   }
-  
   /**
    * Key listener for the input text box
    * 
@@ -138,38 +223,9 @@ public class ClientGui implements Assignment3Starter.OutputPanel.EventHandlers {
     }
   }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
     // create the frame
-    ClientGui main = new ClientGui();
-    
-    // be sure to run in terminal at least once: 
-    //     gradle Maker --args="img/Pineapple-Upside-down-cake.jpg 2"
-    
-    // prepare the GUI for display
-    main.newGame(2);
-    
-    // add images to the grid
-    main.insertImage("img/row-2-col-2.jpg", 1, 1);
-    main.insertImage("img/row-1-col-1.jpg", 0, 0);
-    main.insertImage("img/row-2-col-1.jpg", 1, 0);
-    main.insertImage("img/row-1-col-2.jpg", 0, 1);
-    
-    // show an error for a missing image file
-    main.insertImage("does not exist.jpg", 0, 0);
-    // show an error for too big coordinate
-    main.insertImage("img/Pineapple-Upside-down-cake_1_0.jpg", 2, 0);
-    // show an error for too little coordinate
-    main.insertImage("img/Pineapple-Upside-down-cake_1_0.jpg", -1, 0);
-    
-// run in terminal at least once in terminal: 
-//     gradle Maker --args="img/To-Funny-For-Words1.png 3"
-//
-//    main.newGame(3);
-//    for(int i = 0; i < 3; i++) {
-//      for (int j = 0; j < 3; j++) {
-//        main.insertImage("img/To-Funny-For-Words1_"+i+"_"+j+".jpg", i, j);
-//      }
-//    }
+    ClientGui main = new ClientGui(args);
     
     // show the GUI dialog as modal
     main.show(true);
