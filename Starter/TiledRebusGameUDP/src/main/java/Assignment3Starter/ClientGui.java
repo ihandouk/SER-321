@@ -3,6 +3,8 @@ package Assignment3Starter;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import Assignment3Starter.lib.LoseGameException;
+import Assignment3Starter.lib.ServerIsFullException;
 import java.io.*;
 import javax.swing.JOptionPane;
 import javax.swing.JDialog;

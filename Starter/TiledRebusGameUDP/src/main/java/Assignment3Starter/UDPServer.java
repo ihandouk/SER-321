@@ -7,7 +7,8 @@ import java.awt.image.BufferedImage;
 import javax.imageio.*;
 import java.util.Random;
 import java.util.Base64;
-
+import Assignment3Starter.lib.LoseGameException;
+import Assignment3Starter.lib.ServerIsFullException;
 class UDPServer {
     int boards=0;
     Random random;
@@ -18,8 +19,8 @@ class UDPServer {
     int isWrong=0;
     int num=0;
     JSONObject ObSon;
-    int port = 9000 ;
-    String host = "224.0.0.0";
+    int port = 4999 ;
+    String host = "230.0.0.0";
     InetAddress mcastaddr = null;
     MulticastSocket sock = null;
 

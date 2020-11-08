@@ -1,5 +1,6 @@
 package Assignment3Starter;
-
+import Assignment3Starter.lib.LoseGameException;
+import Assignment3Starter.lib.ServerIsFullException;
 import java.io.*;
 import java.net.*;
 import org.json.*;

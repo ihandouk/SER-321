@@ -1,5 +1,6 @@
 package Assignment3Starter;
-
+import Assignment3Starter.lib.LoseGameException;
+import Assignment3Starter.lib.ServerIsFullException;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

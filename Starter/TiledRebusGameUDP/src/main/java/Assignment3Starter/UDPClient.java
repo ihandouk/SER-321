@@ -7,7 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
 import java.nio.charset.StandardCharsets;
-
+import Assignment3Starter.lib.LoseGameException;
+import Assignment3Starter.lib.ServerIsFullException;
 class UDPClient {
     MulticastSocket sock = null;
     PrintWriter output = null;
@@ -16,7 +17,7 @@ class UDPClient {
     String inTime = null;
     ClientGui gui;
     InetAddress mcastaddr= null;
-    int port = 9000;
+    int port = 4999;
     String host = "230.0.0.0";
     String steam;
 
