@@ -1,0 +1,49 @@
+// set as java application
+apply plugin: 'application'
+
+task Server(type: JavaExec) {
+  group 'Socket Server/Client'
+  description 'Creates Server and waits for clients to connect'
+
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'Server'
+
+  // run with arguments e.g.: gradle Server -Pport=9999
+  if (project.hasProperty("port")) {
+         args(project.getProperty('port'));
+  }
+}
+
+// Client and Server socket, socket can serve up to three clients
+task ThreadedServer(type: JavaExec) {
+  group 'Socket Server/Client'
+  description 'Creates Server and waits for clients to connect'
+
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'ThreadedServer'
+
+  // run with arguments e.g.: gradle ThreadedServer -Pport=9999
+  if (project.hasProperty("port")) {
+         args(project.getProperty('port'));
+  }
+}
+
+task ThreadPoolServer(type: JavaExec) {
+    description 'Creates Server and waits for clients to connect'
+
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'ThreadPoolServer'
+
+    // run with arguments e.g.: gradle ThreadPoolServer -Pport=8888 -Pworkers=25 -Psleep=10
+    if (project.hasProperty("port") && project.hasProperty("workers") && project.hasProperty("sleep")) {
+        args(project.getProperty('port'),project.getProperty('workers'),project.getProperty('sleep'));
+    }
+}
+
+
+
+
+
