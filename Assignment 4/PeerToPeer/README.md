@@ -1,12 +1,12 @@
 #### Purpose:
-Very basic peer-2-peer for a chat. All peers can communicate with each other. 
+Very basic peer-2-peer Q&A Game. All peers can communicate with each other. 
 
 Each peer is client and server at the same time. 
 When started the peer has a serverthread in which the peer listens for potential other peers to connect.
 
 The peer can choose to listen to other peers by setting the host:port for the peers they want to be able to send messages to them. For every one of these peers that this peer wants to listen to a thread is created and a connection established to the server (which is another peer).
 
-Then chatting can start if everyone did this. 
+The host can start the game by typing start. 
 
 Client Thread constantly listens.
 
