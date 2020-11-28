@@ -25,13 +25,13 @@ Task 1:
         One branch / Two Sorters     Arraylist [b]  1249 ms Arraysize 500
         Three Branch / Four Sorters  Arraylist [b]  3126 ms Arraysize 500
 
-    - After adding to more arrays, it is obvious that both Arraylists [b] 
-    and [c] seems to stay consistant with the recorded times. One Sorter
-    recorded as the lowest for both [b] and [c] while Three Branch / Four
-    Sorters, recorded the highest times for both [b] and [c]. Arraylist [a]
-    showed inconsistancy in compersion to Arraylist [b] and [c], where One 
-    branch / Two Sorters recorded the lowest times and Three Branch / Four 
-    Sorters continued to record the highest time for Arraylist [a].
+        - After adding to more arrays, it is obvious that both Arraylists [b] 
+          and [c] seems to stay consistant with the recorded times. One Sorter
+          recorded as the lowest for both [b] and [c] while Three Branch / Four
+          Sorters, recorded the highest times for both [b] and [c]. Arraylist [a]
+          showed inconsistancy in compersion to Arraylist [b] and [c], where One 
+          branch / Two Sorters recorded the lowest times and Three Branch / Four 
+          Sorters continued to record the highest time for Arraylist [a].
 
     3 - Adding four more branches, that will result in appending the
         current branches and creating a total of seven branches and 8 sorters.
