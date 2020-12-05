@@ -19,7 +19,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
     ArrayList<String> arraylist = new ArrayList<>();
 
     @Override
-    public void add(CalcRequest request, StreamObserver<CalcResponse> rObserver){
+    public void add(CalcRequest request, StreamObserver<CalcResponse> responseObserver){
         try{
             System.out.println("Input numbers from a client: "+ request.getNumList().toString());
             double sum = 0;
@@ -36,22 +36,22 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
             rBuilder.setSolution(sum);
             CalcResponse resCal = rBuilder.build();
 
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }catch(Exception e){
             CalcResponse.Builder rBuilder = CalcResponse.newBuilder();
             rBuilder.setIsSuccess(false);
             rBuilder.setError(e.toString());
             CalcResponse resCal = rBuilder.build();
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }
     }
 
     @Override
-    public void subtract(CalcRequest request, StreamObserver<CalcResponse> rObserver){
+    public void subtract(CalcRequest request, StreamObserver<CalcResponse> responseObserver){
         try{
             System.out.println("Input numbers from a client: " +request.getNumList().toString());
             for(int i = 0; i < request.getNumList().size(); i++){
@@ -69,22 +69,22 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
             rBuilder.setSolution(sum);
             CalcResponse resCal = rBuilder.build();
 
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }catch(Exception exception){
             CalcResponse.Builder rBuilder = CalcResponse.newBuilder();
             rBuilder.setIsSuccess(false);
             rBuilder.setError(exception.toString());
             CalcResponse resCal = rBuilder.build();
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }
     }
 
     @Override
-    public void multiply(CalcRequest request, StreamObserver<CalcResponse> rObserver){
+    public void multiply(CalcRequest request, StreamObserver<CalcResponse> responseObserver){
         try{
             System.out.println("Input numbers from a client: " +request.getNumList().toString());
             for(int i = 0; i < request.getNumList().size(); i++){
@@ -102,22 +102,22 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
             rBuilder.setSolution(prod);
             CalcResponse resCal = rBuilder.build();
 
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }catch(Exception exception){
             CalcResponse.Builder rBuilder = CalcResponse.newBuilder();
             rBuilder.setIsSuccess(false);
             rBuilder.setError(exception.toString());
             CalcResponse resCal = rBuilder.build();
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }
     }
     
     @Override
-    public void divide(CalcRequest request, StreamObserver<CalcResponse> rObserver){
+    public void divide(CalcRequest request, StreamObserver<CalcResponse> responseObserver){
         try{
             System.out.println("Input numbers from a client: " +request.getNumList().toString());
             for(int i = 0; i < request.getNumList().size(); i++){
@@ -135,16 +135,16 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
             rBuilder.setSolution(numb);
             CalcResponse resCal = rBuilder.build();
 
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }catch(Exception exception){
             CalcResponse.Builder rBuilder = CalcResponse.newBuilder();
             rBuilder.setIsSuccess(false);
             rBuilder.setError(exception.toString());
             CalcResponse resCal = rBuilder.build();
-            rObserver.onNext(resCal);
-            rObserver.onCompleted();
+            responseObserver.onNext(resCal);
+            responseObserver.onCompleted();
             arraylist.clear();
         }
     }
