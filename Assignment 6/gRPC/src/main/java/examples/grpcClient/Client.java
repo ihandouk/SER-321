@@ -4,7 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 import service.*;
-
+import java.util.ArrayList;
+import java.util.List;
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -34,7 +35,7 @@ import service.WriteResponse;
 /**
  * Client that requests `parrot` method from the `EchoServer`.
  */
-public class EchoClient {
+public class Client {
   private final EchoGrpc.EchoBlockingStub blockingStub;
   private final JokeGrpc.JokeBlockingStub blockingStub2;
   private final RegistryGrpc.RegistryBlockingStub blockingStub3;
@@ -42,7 +43,7 @@ public class EchoClient {
   private final StoryGrpc.StoryBlockingStub blockingStub5;
 
   /** Construct client for accessing server using the existing channel. */
-  public EchoClient(Channel channel, Channel regChannel) {
+  public Client(Channel channel, Channel regChannel) {
     // 'channel' here is a Channel, not a ManagedChannel, so it is not this code's
     // responsibility to
     // shut it down.
@@ -334,10 +335,11 @@ public class EchoClient {
       // Just doing some hard coded calls to the service node without using the
       // registry
       // create client
-      EchoClient client = new EchoClient(channel, regChannel);
+      Client client = new Client(channel, regChannel);
+      client.getServices();
 
       // call the parrot service on the server
-      client.askServerToParrot(message);
+
 
       // ask the user for input how many jokes the user wants
       BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

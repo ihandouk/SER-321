@@ -193,17 +193,32 @@ service/FindServerReq.java
  service.FindServerReq
  service.FindServerReq$1
  service.FindServerReq$Builder
-examples/grpcClient/CalcImpl.java
- examples.grpcClient.CalcImpl
+examples/grpcClient/NodeService.java
+ examples.grpcClient.NodeService
+ examples.grpcClient.NodeService$1
 service/StoryProto.java
  service.StoryProto
 service/ReadResponse.java
  service.ReadResponse
  service.ReadResponse$1
  service.ReadResponse$Builder
-examples/grpcClient/NodeService.java
- examples.grpcClient.NodeService
- examples.grpcClient.NodeService$1
+service/JokeGrpc.java
+ service.JokeGrpc
+ service.JokeGrpc$1
+ service.JokeGrpc$2
+ service.JokeGrpc$3
+ service.JokeGrpc$JokeBaseDescriptorSupplier
+ service.JokeGrpc$JokeBlockingStub
+ service.JokeGrpc$JokeFileDescriptorSupplier
+ service.JokeGrpc$JokeFutureStub
+ service.JokeGrpc$JokeImplBase
+ service.JokeGrpc$JokeMethodDescriptorSupplier
+ service.JokeGrpc$JokeStub
+ service.JokeGrpc$MethodHandlers
+service/TipsWriteResponse.java
+ service.TipsWriteResponse
+ service.TipsWriteResponse$1
+ service.TipsWriteResponse$Builder
 service/ClientRequest.java
  service.ClientRequest
  service.ClientRequest$1
@@ -273,8 +288,8 @@ service/Connection.java
  service.Connection
  service.Connection$1
  service.Connection$Builder
-examples/grpcClient/EchoClient.java
- examples.grpcClient.EchoClient
+examples/grpcClient/Client.java
+ examples.grpcClient.Client
 service/WriteRequestOrBuilder.java
  service.WriteRequestOrBuilder
 service/ClientRequestOrBuilder.java
@@ -292,29 +307,16 @@ service/CalcRequest.java
  service.CalcRequest
  service.CalcRequest$1
  service.CalcRequest$Builder
-examples/grpcClient/Node.java
- examples.grpcClient.Node
- examples.grpcClient.Node$1
-service/TipsReadResponseOrBuilder.java
- service.TipsReadResponseOrBuilder
-service/TipsWriteResponse.java
- service.TipsWriteResponse
- service.TipsWriteResponse$1
- service.TipsWriteResponse$Builder
 service/WriteResponse.java
  service.WriteResponse
  service.WriteResponse$1
  service.WriteResponse$Builder
-service/JokeGrpc.java
- service.JokeGrpc
- service.JokeGrpc$1
- service.JokeGrpc$2
- service.JokeGrpc$3
- service.JokeGrpc$JokeBaseDescriptorSupplier
- service.JokeGrpc$JokeBlockingStub
- service.JokeGrpc$JokeFileDescriptorSupplier
- service.JokeGrpc$JokeFutureStub
- service.JokeGrpc$JokeImplBase
- service.JokeGrpc$JokeMethodDescriptorSupplier
- service.JokeGrpc$JokeStub
- service.JokeGrpc$MethodHandlers
+service/TipsReadResponseOrBuilder.java
+ service.TipsReadResponseOrBuilder
+examples/grpcClient/CalcImpl.java
+ examples.grpcClient.CalcImpl
+examples/grpcClient/Node.java
+ examples.grpcClient.Node
+ examples.grpcClient.Node$1
+examples/grpcClient/EchoClient.java
+ examples.grpcClient.EchoClient

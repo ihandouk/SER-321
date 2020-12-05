@@ -57,7 +57,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
     public void multiply(CalcRequest request, StreamObserver<CalcResponse> responseObserver){
 
         CalcResponse.Builder response = CalcResponse.newBuilder();
-        double mult = 0;
+        double mult = 1;
         for(int i = 0; i<request.getNumCount(); i++){
             mult = mult * request.getNum(i);
         }
