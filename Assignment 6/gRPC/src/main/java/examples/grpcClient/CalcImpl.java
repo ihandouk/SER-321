@@ -1,8 +1,5 @@
 package examples.grpcClient;
 
-import java.util.ArrayList;
-import java.util.Stack;
-
 import io.grpc.stub.StreamObserver;
 import service.CalcGrpc;
 import service.CalcRequest;
@@ -24,7 +21,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
         }
 
         response.setIsSuccess(true);
-        response.setError("Empty");
+        response.setError("None");
         response.setSolution(sum);
 
         CalcResponse calcResponse = response.build();
@@ -44,7 +41,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
             }
 
             response.setIsSuccess(true);
-            response.setError("Empty");
+            response.setError("None");
             response.setSolution(subs);
         }else{
             response.setIsSuccess(false);
@@ -66,7 +63,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
         }
 
         response.setIsSuccess(true);
-        response.setError("Empty");
+        response.setError("None");
         response.setSolution(mult);
 
         CalcResponse calcResponse = response.build();
@@ -90,7 +87,7 @@ public class CalcImpl extends CalcGrpc.CalcImplBase {
                 double divi = numer/denom;
                 response.setIsSuccess(true);
                 response.setSolution(divi);
-                response.setError("Empty");
+                response.setError("None");
             }else{
                 response.setIsSuccess(false);
                 response.setSolution(0);

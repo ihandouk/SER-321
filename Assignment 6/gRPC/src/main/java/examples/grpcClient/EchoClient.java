@@ -3,8 +3,7 @@ package examples.grpcClient;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
-
-import com.google.protobuf.Empty;
+import service.*;
 
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;

@@ -28,7 +28,7 @@ public class StoryImpl extends StoryGrpc.StoryImplBase {
         return response;
     }
 
-    public synchronized void readStory (Empty empty, StreamObserver<ReadResponse> responseObserver){
+    public synchronized void read(Empty empty, StreamObserver<ReadResponse> responseObserver){
 
         ReadResponse.Builder response = ReadResponse.newBuilder();
         String string = getStory();
@@ -47,7 +47,7 @@ public class StoryImpl extends StoryGrpc.StoryImplBase {
         responseObserver.onCompleted();
     }
 
-    public synchronized void writeStory(WriteRequest req, StreamObserver<WriteResponse> responsObserver){
+    public synchronized void write(WriteRequest req, StreamObserver<WriteResponse> responsObserver){
 
         WriteResponse.Builder response = WriteResponse.newBuilder();
 

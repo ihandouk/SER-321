@@ -15,8 +15,6 @@ import static io.grpc.stub.ServerCalls.asyncUnaryCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedStreamingCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
-import com.google.protobuf.Empty;
-
 /**
  */
 @javax.annotation.Generated(
@@ -220,9 +218,9 @@ public final class StoryGrpc {
 
     /**
      */
-    public service.ReadResponse read(Empty empty) {
+    public service.ReadResponse read(service.Empty request) {
       return blockingUnaryCall(
-          getChannel(), getReadMethod(), getCallOptions(), empty);
+          getChannel(), getReadMethod(), getCallOptions(), request);
     }
 
     /**
