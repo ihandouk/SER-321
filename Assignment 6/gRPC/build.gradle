@@ -140,18 +140,36 @@ task testProtobufRegistration(type: JavaExec) {
 // ####### Client Server example with grpc
 
 // runs a client which will run some commands on a node and also on the registration node
-task runClientJava(type: JavaExec) {
+task runClient(type: JavaExec) {
   dependsOn arguments
+    group "Task 1 - Run without Registry"
   classpath = sourceSets.main.runtimeClasspath
   description = "Run Client"
-  main = 'example.grpcclient.EchoClient'
+  main = 'examples.grpcClient.EchoClient'
   standardInput = System.in
   // default args
-  args serviceHost 
-  args servicePort
+    if (project.hasProperty("host")) {
+        args(project.getProperty("host"))
+    }else{
+        args serviceHost
+    }
+
+    if (project.hasProperty("port")) {
+        args(project.getProperty("port"))
+    }else{
+        args servicePort
+    }
+
+
   args registryHost
   args grpcPort
-  args message 
+  args message
+
+    if (project.hasProperty("auto")) {
+        args(project.getProperty("auto"))
+    }else{
+        args 0
+    }
 }
 
 // runs a service node which already has the echo and joke service included
@@ -168,6 +186,36 @@ task runNode(type: JavaExec) {
   args nodeName
 }
 
+task runClientWithReg(type: JavaExec) {
+    dependsOn arguments
+    group "Task 2 - With Registry"
+    classpath = sourceSets.main.runtimeClasspath
+    description = "Run Client"
+    main = 'examples.grpcClient.Client'
+    standardInput = System.in
+    // default args
+    args serviceHost
+    args servicePort
+    args registryHost
+    args grpcPort
+    args message
+    args 0
+}
+
+// runs a service node which already has the echo and joke service included
+task registerServiceNode(type: JavaExec) {
+  dependsOn arguments
+    group "Task 2 - With Registry"
+  classpath = sourceSets.main.runtimeClasspath
+  description = "Run Server"
+  main = 'examples.grpcClient.NodeService'
+  // default args
+  args registryHost
+  args grpcPort
+  args serviceHost
+  args servicePort
+  args nodeName
+}
 
 // How I ran it:
 // ser321test.duckdns.org is my IP on the first AWS instance
