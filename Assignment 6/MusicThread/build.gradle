@@ -1,0 +1,41 @@
+plugins {
+  id 'application'
+}
+
+description = "Publisher Subscriber"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+  compile group: 'org.apache.activemq', name: 'activemq-all', version: '5.15.8'
+  compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.8'
+  compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.8'
+  compile group: 'org.json', name: 'json', version: '20200518'
+}
+
+task MusicThread(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  description = "Run MusicThread"
+  main = 'MusicThread'
+  if (project.hasProperty("userName")) {
+    userName = project.getProperty("userName")
+  }else{
+    args("")
+  }
+}
+task Remote(type: JavaExec) {
+  description 'Runs Remote'
+  classpath = sourceSets.main.runtimeClasspath
+  main = 'Remote'
+  standardInput = System.in
+}
+
+//gradle runDemoSubscriberModelWithListener -PtopicName=MyTopic -PclientName=MyClient -PuserName=default -Ppassword=default
+task Subscriber(type: JavaExec) {
+  classpath = sourceSets.main.runtimeClasspath
+  description = "Run Subscriber With Listener"
+  standardInput = System.in
+  main = 'Subscriber'
+}
