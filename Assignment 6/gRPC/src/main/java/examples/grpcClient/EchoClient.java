@@ -1,15 +1,27 @@
-package example.grpcclient;
+package examples.grpcClient;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import java.util.concurrent.TimeUnit;
-import service.*;
-import test.TestProtobuf;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import service.ClientRequest;
+import service.EchoGrpc;
+import service.FindServerReq;
+import service.FindServersReq;
+import service.GetServicesReq;
+import service.JokeGrpc;
+import service.JokeReq;
+import service.JokeRes;
+import service.JokeSetReq;
+import service.JokeSetRes;
+import service.RegistryGrpc;
+import service.ServerListRes;
+import service.ServerResponse;
+import service.ServicesListRes;
+import service.SingleServerRes;
 
 /**
  * Client that requests `parrot` method from the `EchoServer`.
