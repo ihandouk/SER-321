@@ -177,7 +177,7 @@ task runNode(type: JavaExec) {
   dependsOn arguments
   classpath = sourceSets.main.runtimeClasspath
   description = "Run Server"
-  main = 'example.grpcclient.Node'
+  main = 'examples.grpcClient.Node'
   // default args
   args registryHost
   args grpcPort

@@ -30,23 +30,19 @@ public class Node {
     this.network = new net.proto.Network();
   }
 
-  private void start() throws IOException {
-    /* The port on which the server should run */
-    // Here we are adding the different services that a client can call
-    ArrayList<String> services = new ArrayList<>();
+  private void start() throws IOException{
+    ArrayList<String> arrayList = new ArrayList<>();
     server = ServerBuilder.forPort(port)
-        .addService(new EchoImpl())
-        .addService(new JokeImpl())
-        .addService(new StoryImpl())
-        .addService(new CalcImpl())
-        .addService(new RegistryAnswerImpl(services)).build().start();
+    .addService(new EchoImpl())
+    .addService(new JokeImpl()).addService(new StoryImpl())
+    .addService(new CalcImpl())
+    .addService(new RegistryAnswerImpl(arrayList)).build().start();
 
-    for (var service : server.getServices()) {
-      // returns the services that are available from this node
-      for (ServerMethodDefinition<?, ?> method : service.getMethods()) {
-        services.add(method.getMethodDescriptor().getFullMethodName());
-        System.out.println(method.getMethodDescriptor().getFullMethodName());
-      }
+    for(var variable : server.getServices()){
+        for(ServerMethodDefinition<?, ?> method: variable.getMethods()){
+            arrayList.add(method.getMethodDescriptor().getFullMethodName());
+            System.out.println(method.getMethodDescriptor().getFullMethodName());
+        }
     }
 
     System.out.println("Server running ...");

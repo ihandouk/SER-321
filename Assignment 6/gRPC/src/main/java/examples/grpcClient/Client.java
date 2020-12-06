@@ -2,10 +2,9 @@ package examples.grpcClient;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.concurrent.TimeUnit;
-import service.*;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -14,6 +13,7 @@ import service.CalcRequest;
 import service.CalcResponse;
 import service.ClientRequest;
 import service.EchoGrpc;
+import service.Empty;
 import service.FindServerReq;
 import service.FindServersReq;
 import service.GetServicesReq;
@@ -36,11 +36,11 @@ import service.WriteResponse;
  * Client that requests `parrot` method from the `EchoServer`.
  */
 public class Client {
-  private final EchoGrpc.EchoBlockingStub blockingStub;
-  private final JokeGrpc.JokeBlockingStub blockingStub2;
+  private EchoGrpc.EchoBlockingStub blockingStub;
+  private JokeGrpc.JokeBlockingStub blockingStub2;
   private final RegistryGrpc.RegistryBlockingStub blockingStub3;
-  private final CalcGrpc.CalcBlockingStub blockingStub4;
-  private final StoryGrpc.StoryBlockingStub blockingStub5;
+  private CalcGrpc.CalcBlockingStub blockingStub4;
+  private StoryGrpc.StoryBlockingStub blockingStub5;
 
   /** Construct client for accessing server using the existing channel. */
   public Client(Channel channel, Channel regChannel) {
@@ -48,11 +48,15 @@ public class Client {
     // responsibility to
     // shut it down.
 
+    setRegStub(channel);
+    blockingStub3 = RegistryGrpc.newBlockingStub(regChannel);
+  }
+
+  public void setRegStub(Channel channel){
     // Passing Channels to code makes code easier to test and makes it easier to
     // reuse Channels.
     blockingStub = EchoGrpc.newBlockingStub(channel);
     blockingStub2 = JokeGrpc.newBlockingStub(channel);
-    blockingStub3 = RegistryGrpc.newBlockingStub(regChannel);
     blockingStub4 = CalcGrpc.newBlockingStub(channel);
     blockingStub5 = StoryGrpc.newBlockingStub(channel);
   }
@@ -228,18 +232,26 @@ public class Client {
   }
 
 
-  public void getServices() {
+  public String[] getServices() {
     GetServicesReq request = GetServicesReq.newBuilder().build();
     ServicesListRes response;
+    ArrayList<String> aStrings = new ArrayList<String>();
     try {
       response = blockingStub3.getServices(request);
       for(int i=0;i<response.getServicesCount();i++){
-        System.out.println(response.getServices(i));
+        if(!aStrings.contains(response.getServices(i))){
+          aStrings.add(response.getServices(i));
+        }
       }
     } catch (Exception e) {
       System.err.println("\nRPC failed: " + e);
-      return;
+      System.exit(0);
     }
+    String[] sting = new String[aStrings.size()];
+    for(int i = 0; i<aStrings.size(); i++){
+      sting[i] = aStrings.get(i);
+    }
+    return sting;
   }
 
   public void findServer(String name) {
@@ -254,16 +266,19 @@ public class Client {
     }
   }
 
-  public void findServers(String name) {
+  public String findServers(String name) {
     FindServersReq request = FindServersReq.newBuilder().setServiceName(name).build();
     ServerListRes response;
+    String serString = "";
     try {
       response = blockingStub3.findServers(request);
+      serString = response.getConnections(0).getUri() + ":" + response.getConnections(0).getPort();
       System.out.println(response.toString());
     } catch (Exception e) {
       System.err.println("\nRPC failed: " + e);
-      return;
+      System.exit(0);
     }
+    return serString;
   }
 
   public static void main(String[] args) throws Exception {
@@ -336,82 +351,117 @@ public class Client {
       // registry
       // create client
       Client client = new Client(channel, regChannel);
-      client.getServices();
 
-      // call the parrot service on the server
-
-
-      // ask the user for input how many jokes the user wants
-      BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-      System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      System.out.println("Available Operators and Story Functions:");
-      System.out.println("\nadd \nsubtract \nmultiply \ndivide \nreadstory \naddstory \njoke \naddjoke \nparrot\n");
-      System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-      while (true){
-        System.out.print("Choose an Option: ");
-        String cString = reader.readLine();
-        if(cString.equalsIgnoreCase("exit")){
-          System.out.println("Exiting...");
-          break;
-        }
-        switch(cString.toLowerCase()){
-          case "add":
-            System.out.println("\n\nMust have two operands to perform an addition");
-            System.out.print("Input a String of Numbers seperated by Space: \n\n");
-            String addNumbers = reader.readLine();
-            client.add(addNumbers);
-            break;
-          case "subtract":
-            System.out.println("\n\nMust have two operands to perform a subtraction");
-            System.out.print("Input a String of Numbers seperated by Space: \n\n");
-            String subNumbers = reader.readLine();
-            client.subtract(subNumbers);
-            break;
-          case "multiply":
-            System.out.println("\n\nMust have two operands to perform a multiplication");
-            System.out.print("Input a String of Numbers seperated by Space: \n\n");
-            String multNumbers = reader.readLine();
-            client.multiply(multNumbers);
-            break;
-          case "divide":
-            System.out.println("\n\nMust have two operands to perform a division");
-            System.out.print("Input a String of Numbers seperated by Space: \n\n");
-            String divNumbers = reader.readLine();
-            client.divide(divNumbers);
-            break;
-          case "readstory":
-            client.askForStory();
-            break;
-          case "addstory":
-            System.out.println("\n\nInput a sentance to add to the story");
-            System.out.print("Sentence: \n\n");
-            String newLine = reader.readLine();
-            client.writeStory(newLine);
-            break;
-          case "joke":
-            System.out.println("\n\nHow many joke would you like to hear?");
-            System.out.print("Number: \n\n");
-            try {
-              int num = Integer.valueOf(reader.readLine());
-              client.askForJokes(num);
-            }catch(NumberFormatException e){
-              System.out.println("\n\nIncorrect Number given!");
+      String[] regOpStrings;
+      while(true){
+        System.out.println("All Available Services:");
+        regOpStrings = client.getServices();
+          int index = 0;
+          if(regOpStrings.length == 0){
+            System.out.println("No Services are available in this Register");
+            System.exit(0);
+          }
+          for(int i=0;i<regOpStrings.length;i++){
+            if(!regOpStrings[i].contains("Registry")) {
+              String module = regOpStrings[i].split("/")[0];
+              String action = regOpStrings[i].split("/")[1];
+              System.out.println(index + "|...[" + module + "] " + action);
+              index++;
             }
+          }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Input the number of Service!");
+
+          System.out.print("Input number here: ");
+          String oString = reader.readLine();
+          try{
+            oString = regOpStrings[Integer.valueOf(oString)];
+          }catch (NumberFormatException e){
+            oString = "";
+          }catch (IndexOutOfBoundsException e){
+            oString = "";
+          }
+          if(oString.equalsIgnoreCase("exit")){
+            System.out.println("Exiting...");
             break;
-          case "addjoke":
-            System.out.println("\n\nType a joke to add!");
-            System.out.print("Joke: \n\n");
-            String newJoke = reader.readLine();
-            client.setJoke(newJoke);
+          }
+          if(!oString.equals("")){
+            String terString = client.findServers(oString);
+            if(terString.length() > 0) {
+              client.setRegStub(ManagedChannelBuilder.forTarget(terString).usePlaintext().build());
+            }
+          }
+
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println("Available Operators and Story Functions:");
+        System.out.println("\nadd \nsubtract \nmultiply \ndivide \nreadstory \naddstory \njoke \naddjoke \nparrot\n");
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        while (true){
+          System.out.print("Choose an Option: ");
+          String cString = reader.readLine();
+          if(cString.equalsIgnoreCase("exit")){
+            System.out.println("Exiting...");
             break;
-          case "parrot":
-            System.out.println("\n\nType a Sentence to have printed back to you!");
-            System.out.print("Sentence: \n\n");
-            String parrot = reader.readLine();
-            client.askServerToParrot(parrot);
-            break;
-          default:
-            System.out.println("\n\nUnknown command!");
+          }
+          switch(cString.toLowerCase()){
+            case "add":
+              System.out.println("\n\nMust have two operands to perform an addition");
+              System.out.print("Input a String of Numbers seperated by Space: \n\n");
+              String addNumbers = reader.readLine();
+              client.add(addNumbers);
+              break;
+            case "subtract":
+              System.out.println("\n\nMust have two operands to perform a subtraction");
+              System.out.print("Input a String of Numbers seperated by Space: \n\n");
+              String subNumbers = reader.readLine();
+              client.subtract(subNumbers);
+              break;
+            case "multiply":
+              System.out.println("\n\nMust have two operands to perform a multiplication");
+              System.out.print("Input a String of Numbers seperated by Space: \n\n");
+              String multNumbers = reader.readLine();
+              client.multiply(multNumbers);
+              break;
+            case "divide":
+              System.out.println("\n\nMust have two operands to perform a division");
+              System.out.print("Input a String of Numbers seperated by Space: \n\n");
+              String divNumbers = reader.readLine();
+              client.divide(divNumbers);
+              break;
+            case "readstory":
+              client.askForStory();
+              break;
+            case "addstory":
+              System.out.println("\n\nInput a sentance to add to the story");
+              System.out.print("Sentence: \n\n");
+              String newLine = reader.readLine();
+              client.writeStory(newLine);
+              break;
+            case "joke":
+              System.out.println("\n\nHow many joke would you like to hear?");
+              System.out.print("Number: \n\n");
+              try {
+                int num = Integer.valueOf(reader.readLine());
+                client.askForJokes(num);
+              }catch(NumberFormatException e){
+                System.out.println("\n\nIncorrect Number given!");
+              }
+              break;
+            case "addjoke":
+              System.out.println("\n\nType a joke to add!");
+              System.out.print("Joke: \n\n");
+              String newJoke = reader.readLine();
+              client.setJoke(newJoke);
+              break;
+            case "parrot":
+              System.out.println("\n\nType a Sentence to have printed back to you!");
+              System.out.print("Sentence: \n\n");
+              String parrot = reader.readLine();
+              client.askServerToParrot(parrot);
+              break;
+            default:
+              System.out.println("\n\nUnknown command!");
+          }
         }
       }
       /* Reading data using readLine
